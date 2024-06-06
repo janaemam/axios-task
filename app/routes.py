@@ -1,5 +1,5 @@
 from flask import request, jsonify, current_app as app
-from .services import deposit, withdraw, get_balance, open_account
+from .services import deposit, withdraw, get_balance, open_account, delete_account
 from .schema import AccountSchema, TransactionSchema
 
 @app.route('/create',methods=['POST'])
@@ -51,3 +51,12 @@ def balance(id):
         return jsonify({'error': 'Account not found'}), 404
 
     return jsonify({'Owner': account.owner, 'Balance': account.balance}), 200
+
+
+@app.route('/close/<int:id>', methods=['DELETE'])
+def close_account(id):
+    result, status = delete_account(id)
+    if status!= 200:
+        return jsonify({'error': result}), status
+    
+    return jsonify({'message': 'Account closed successfully'}), 200

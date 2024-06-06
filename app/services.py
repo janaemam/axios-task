@@ -36,3 +36,14 @@ def deposit(id, amount):
         db.session.add(transaction)
         db.session.commit()
         return transaction,200
+    
+def delete_account(id):
+    account = Account.query.get(id)
+    Transaction.query.filter_by(account_id=id).delete()
+    if not account:
+         return "Account not found", 404
+    
+    db.session.delete(account)
+    db.session.commit()
+    
+    return "Deleted Successfully", 200
