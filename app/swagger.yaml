@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: My Flask API
+  version: 1.0.0
+  description: |
+    This API provides endpoints for creating accounts, performing deposits and withdrawals, and checking balances.
+servers:
+  - url: http://localhost:5000
+paths:
+  /create:
+    post:
+      summary: Create Account
+      description: Creates a new account with the provided name.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Account successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad Request. Name is required.
+  /deposit:
+    post:
+      summary: Make Deposit
+      description: Deposits funds into the specified account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                amount:
+                  type: number
+      responses:
+        '200':
+          description: Deposit successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Bad Request. ID and amount are required.
+  /withdraw:
+    post:
+      summary: Make Withdrawal
+      description: Withdraws funds from the specified account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                amount:
+                  type: number
+      responses:
+        '200':
+          description: Withdrawal successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Bad Request. ID and amount are required.
+        '404':
+          description: Account not found or insufficient funds.
+  /balance/{id}:
+    get:
+      summary: Get Account Balance
+      description: Retrieves the balance of the specified account.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found.
+  /delete/{id}:
+    delete:
+      summary: Delete Account
+      description: Deletes the specified account.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Account successfully deleted.
+        '404':
+          description: Account not found.
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner:
+          type: string
+        balance:
+          type: number
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        amount:
+          type: number
+        type:
+          type: string
+        account_id:
+          type: integer
